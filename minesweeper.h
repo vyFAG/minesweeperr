@@ -23,8 +23,8 @@ private:
     Ui::MineSweeper *ui;
     
     int side_length = 20;
-    int width_cells = 10;
-    int height_cells = 10;
+    int width_cells = 4;
+    int height_cells = 4;
     
     int bombs_count = round((width_cells * height_cells) * 0.2);
     

@@ -11,18 +11,28 @@ MineSweeper::MineSweeper(QWidget *parent)
 {srand(time(0));
     this->setFixedSize(side_length * width_cells, side_length * height_cells);
     
-    game_field.resize(height_cells);
+    game_field.resize(height_cells + 1);
     
     int bombs_to_add = bombs_count;
     int remain_cells = width_cells * height_cells;
     
+    QVector<QVector<int>> bombs_coords;
+    int index_of_bomb = 0;
+    bombs_coords.resize(bombs_count + 1);
+    
     for (int h = 0; h < height_cells; h++) {
-        for(int w = 0; w < width_cells; w++) {    
+        for(int w = 0; w < width_cells; w++) {
             int random = rand() % (remain_cells + bombs_to_add);
             
-            game_field[h].resize(width_cells);
+            game_field[h].resize(width_cells + 1);
             
             if (random >= remain_cells) {
+                bombs_coords[index_of_bomb].resize(2);
+                bombs_coords[index_of_bomb][0] = h;
+                bombs_coords[index_of_bomb][1] = w;
+                
+                index_of_bomb++;
+                
                 game_field[h][w] = -1;
                 bombs_to_add--;
             } else {
@@ -33,73 +43,20 @@ MineSweeper::MineSweeper(QWidget *parent)
         }
     }
     
-    /*for (int h = 0; h < height_cells; h++) {
+    for (int h = 0; h < height_cells; h++) {
         for(int w = 0; w < width_cells; w++) {
             int bombs_around = 0;
-            for (int i = 0; i < 8; i++) {
-                switch(i) {    
-                case 0:
-                    if (w > 0 && h > 0) {
-                        if(game_field[h - 1][w - 1] == 0) {
-                            bombs_around++;
-                        }
+            if (game_field[h][w] != -1) {
+                for(int i = 0; i < bombs_count; i++) {
+                    if (abs(bombs_coords[i][0] - h) <= 1 && abs(bombs_coords[i][1] - w) <= 1) {
+                        bombs_around++;
                     }
-                    break;
-                case 1:
-                    if(h > 0) {
-                        if(game_field[h - 1][w] == 0) {
-                            bombs_around++;
-                        }
-                    }
-                    break;
-                case 2:
-                    if (w < width_cells + 1 && h > 0) {
-                        if(game_field[h - 1][w + 1] == 0) {
-                            bombs_around++;
-                        }
-                    }
-                    break;
-                case 3:
-                    if (w > 0) {
-                        if(game_field[h][w - 1] == 0) {
-                            bombs_around++;
-                        }
-                    }
-                    break;
-                case 4:
-                    if (w < width_cells + 1) {
-                        if(game_field[h][w + 1] == 0) {
-                            bombs_around++;
-                        }
-                    }
-                    break;
-                case 5:
-                    if (h < height_cells + 1 && w > 0) {
-                        if(game_field[h + 1][w - 1] == 0) {
-                            bombs_around++;
-                        }
-                    }
-                    break;
-                case 6:
-                    if (h < height_cells + 1) {
-                        if(game_field[h + 1][w] == 0) {
-                            bombs_around++;
-                        }
-                    }
-                    break;
-                case 7:
-                    if (h < height_cells + 1 && width_cells + 1) {
-                        if(game_field[h][w - 1] == 0) {
-                            bombs_around++;
-                        }
-                    }
-                    break;
                 }
+                
+                game_field[h][w] = bombs_around;
             }
-            
-            //game_field[h][w] = bombs_around;
         }
-    }*/
+    }
     
     printField();
     
